@@ -67,7 +67,7 @@ def select_teams(player_list):
     elif len(myteam.TeamB) < len(myteam.TeamA):
         myteam.TeamB.append(" ")
 
-    return "Captains: "+myteam.TeamA[1]+ " and "+ myteam.TeamB[1],pd.DataFrame({"White-Jersey Team": myteam.TeamA, "Black-Jersey Team": myteam.TeamB})
+    return "Captains: "+myteam.TeamA[1]+ "  --  "+ myteam.TeamB[1],pd.DataFrame({"White-Jersey Team": myteam.TeamA, "Black-Jersey Team": myteam.TeamB})
 
 
 st.title("Sunday Soccer Team Selection")
@@ -83,7 +83,7 @@ with st.sidebar:
         caps,teams = select_teams(selected_options)
 
 if teams is not None:
-    st.write("## The number of Players: {}".format(len(selected_options)))
-    st.write("### {}".format(caps))
+    st.write("### Players: {}".format(len(selected_options)))
+    st.write("*{}*".format(caps))
     st.write("-----")
     st.table(teams)
