@@ -86,4 +86,4 @@ if teams is not None:
     st.write("## The number of Players: {}".format(len(selected_options)))
     st.write("### {}".format(caps))
     st.write("-----")
-    st.write(teams)
+    st.table(teams)
