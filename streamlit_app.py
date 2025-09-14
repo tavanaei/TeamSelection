@@ -6,7 +6,8 @@ df = pd.read_csv('Soccer Sunday.csv')
 players = list(df['Player'])
 
 class Team:
-    def __init__(self, player_list):
+    def __init__(self, player_dict):
+        player_list = list(player_dict.keys())
         self.table = df
         self.table = self.table[self.table['Player'].isin(player_list)].reset_index(drop=True)
         #print(len(self.table))
@@ -16,6 +17,10 @@ class Team:
         self.table = self.table.sample(frac=1).reset_index(drop=True)
         self.TeamA = []
         self.TeamB = []
+        for i in range(len(self.table)):
+            name = self.table.iloc[i]["Player"]
+            for c in ["Goalie","Defense","Middle","Forward"]:
+                self.table[c].iloc[i] = self.table[c].iloc[i]*player_dict[name]
     def select_goalie(self,A,B):
         self.table.sort_values(by=['Goalie'], inplace=True, ascending=False)
         A.append(self.table.iloc[0]['Player'])
@@ -69,16 +74,42 @@ def select_teams(player_list):
 
     return "Captains: "+myteam.TeamA[1]+ "  --  "+ myteam.TeamB[1],pd.DataFrame({"White-Jersey Team": myteam.TeamA, "Black-Jersey Team": myteam.TeamB})
 
+st.markdown(
+    """
+    <style>
+    section[data-testid="stSidebar"] {
+        width: 300px !important;  # Set the desired width here
+        margin-right: 50px;
+    }
+    </style>
+    """,
+    unsafe_allow_html=True,
+)
 
 st.title("Sunday Soccer Team Selection")
 teams = None
 with st.sidebar:
     st.header("Players")
-    
-    selected_options = st.multiselect(
-        "Select attending players:",
-        players
-    )
+    for player in players:
+        col1,col2 = st.columns([15,6])
+        with col1:
+            checkbox_key = f"checkbox_{player}"
+            if checkbox_key not in st.session_state:
+                st.session_state[checkbox_key] = False
+            checked = st.checkbox(player,key=checkbox_key)
+        with col2:
+            if checked:
+                slider_key = f"slider_{player}"
+                st.radio("Strength",[10,8,5],
+                        horizontal=True,key=slider_key)
+
+    #selected_options = st.multiselect(
+    #    "Select attending players:",
+    #    players
+    #)
+    selected_options = {
+        key.replace("slider_",""): float(value)/10.0 for key,value in st.session_state.items() if key.startswith("slider_")
+    }
     if st.button("Run"):
         caps,teams = select_teams(selected_options)
 
