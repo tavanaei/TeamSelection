@@ -1,6 +1,7 @@
 import streamlit as st
 import pandas as pd
 import copy
+import random
 
 df = pd.read_csv('Soccer Sunday.csv')
 players = list(df['Player'])
@@ -71,8 +72,9 @@ def select_teams(player_list):
         myteam.TeamA.append(" ")
     elif len(myteam.TeamB) < len(myteam.TeamA):
         myteam.TeamB.append(" ")
-
-    return "Captains: "+myteam.TeamA[1]+ "  --  "+ myteam.TeamB[1],pd.DataFrame({"White-Jersey Team": myteam.TeamA, "Black-Jersey Team": myteam.TeamB})
+    cols = ["White-Jersey Team","Black-Jersey Team"]
+    random.shuffle(cols)
+    return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB})
 
 st.markdown(
     """
