@@ -88,35 +88,80 @@ st.markdown(
     unsafe_allow_html=True,
 )
 
-st.title("Sunday Soccer Team Selection")
-teams = None
-with st.sidebar:
-    st.header("Players")
-    for player in players:
-        col1,col2 = st.columns([15,6])
-        with col1:
-            checkbox_key = f"checkbox_{player}"
-            if checkbox_key not in st.session_state:
-                st.session_state[checkbox_key] = False
-            checked = st.checkbox(player,key=checkbox_key)
-        with col2:
-            if checked:
-                slider_key = f"slider_{player}"
-                st.radio("Strength",[10,8,5],
-                        horizontal=True,key=slider_key)
+selection_tab,player_tab = st.tabs(["Team Selection","Player Update"])
+with selection_tab:
+    st.title("Sunday Soccer Team Selection")
+    teams = None
+    with st.sidebar:
+        st.header("Players")
+        for player in players:
+            col1,col2 = st.columns([15,6])
+            with col1:
+                checkbox_key = f"checkbox_{player}"
+                if checkbox_key not in st.session_state:
+                    st.session_state[checkbox_key] = False
+                checked = st.checkbox(player,key=checkbox_key)
+            with col2:
+                if checked:
+                    slider_key = f"slider_{player}"
+                    st.radio("Strength",[10,8,5],
+                            horizontal=True,key=slider_key)
 
-    #selected_options = st.multiselect(
-    #    "Select attending players:",
-    #    players
-    #)
-    selected_options = {
-        key.replace("slider_",""): float(value)/10.0 for key,value in st.session_state.items() if key.startswith("slider_")
-    }
-    if st.button("Run"):
-        caps,teams = select_teams(selected_options)
+        #selected_options = st.multiselect(
+        #    "Select attending players:",
+        #    players
+        #)
+        selected_options = {
+            key.replace("slider_",""): float(value)/10.0 for key,value in st.session_state.items() if key.startswith("slider_")
+        }
+        if st.button("Run"):
+            caps,teams = select_teams(selected_options)
 
-if teams is not None:
-    st.write("### Players: {}".format(len(selected_options)))
-    st.write("*{}*".format(caps))
+    if teams is not None:
+        st.write("### Players: {}".format(len(selected_options)))
+        st.write("*{}*".format(caps))
+        st.write("-----")
+        st.table(teams)
+
+with player_tab:
+    st.write("### Update Player")
+    selected_player = st.selectbox("Select the player?",players,index=None)
+    if selected_player:
+        row = df[df['Player']==selected_player]
+        ind = row.index
+        goal = st.radio("Goalie",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_g")
+        back = st.radio("Defense",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_b")
+        mid = st.radio("Middle",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_m")
+        forw = st.radio("Forward",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_f")
+        
+        if st.button("Update"):
+            df['Goalie'].loc[ind] = df['Goalie'].loc[ind]+goal
+            df['Defense'].loc[ind] = df['Defense'].loc[ind]+back
+            df['Middle'].loc[ind] = df['Middle'].loc[ind]+mid
+            df['Forward'].loc[ind] = df['Forward'].loc[ind]+forw
+            df.to_csv('Soccer Sunday.csv',index=False)
+
+            st.write('The player "{}"" is updated'.format(row.Player.item()))
+
     st.write("-----")
-    st.table(teams)
+
+    st.write("### Add New Player")
+    selected_new = st.selectbox("Select a player with similar seed?",players,index=None)
+    if selected_new:
+        row = df[df['Player']==selected_new]
+        st.write("**How different is the new player?**")
+        new_name = st.text_input("Name")
+        goal2 = st.radio("Goalie",[-2,-1,0,1,2],index=2,horizontal=True)
+        back2 = st.radio("Defense",[-2,-1,0,1,2],index=2,horizontal=True)
+        mid2 = st.radio("Middle",[-2,-1,0,1,2],index=2,horizontal=True)
+        forw2 = st.radio("Forward",[-2,-1,0,1,2],index=2,horizontal=True)
+        
+        if st.button("Add Player"):
+            new_player = [new_name,row.Defense.item()+back2,row.Middle.item()+mid2,row.Forward.item()+forw2,row.Goalie.item()+goal2,0]
+            df = pd.concat([df,pd.DataFrame([new_player],columns=["Player","Defense","Middle","Forward","Goalie","Present"])])
+            df.to_csv('Soccer Sunday.csv',index=False)
+            st.write('The player "{}"" is Added'.format(new_name))
+
+    
+
+
