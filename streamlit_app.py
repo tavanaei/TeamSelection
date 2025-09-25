@@ -43,9 +43,12 @@ class Team:
     def select_forward(self,A,B):
         self.table.sort_values(by=['Forward'], inplace=True, ascending=False)
         A.append(self.table.iloc[0]['Player'])
+        v_a = self.table.iloc[0]['Forward']
         self.table.drop(self.table.index[0], inplace=True)
         B.append(self.table.iloc[0]['Player'])
+        v_b = self.table.iloc[0]['Forward']
         self.table.drop(self.table.index[0], inplace=True)
+        return v_a,v_b
     def select_rest(self,A,B):
         self.table['overall'] = self.table[['Goalie','Defense','Middle','Forward']].mean(axis=1)
         self.table.sort_values(by=['overall'], inplace=True, ascending=False)
@@ -56,10 +59,13 @@ class Team:
             self.table.drop(self.table.index[0], inplace=True)
     def make_teams(self):
         self.select_goalie(self.TeamA,self.TeamB)
-        self.select_forward(self.TeamB,self.TeamA)
+        f_b,f_a = self.select_forward(self.TeamB,self.TeamA)
         self.select_midfielder(self.TeamA,self.TeamB)
-        self.select_defender(self.TeamB,self.TeamA)
-        self.select_forward(self.TeamA,self.TeamB)
+        if f_b-f_a>1:
+            self.select_defender(self.TeamA,self.TeamB)
+        else:
+            self.select_defender(self.TeamB,self.TeamA)
+        x1,x2 = self.select_forward(self.TeamA,self.TeamB)
         self.select_midfielder(self.TeamB,self.TeamA)
         self.select_defender(self.TeamA,self.TeamB)
         while len(self.table)>0:
