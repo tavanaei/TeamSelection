@@ -4,7 +4,7 @@ import copy
 import random
 import os
 
-df = pd.read_csv('Soccer Sunday.csv')
+df = pd.read_csv('Soccer Sunday.csv').sort_values(by='Player')
 players = list(df['Player'])
 
 def push_to_git():
@@ -81,11 +81,13 @@ def select_teams(player_list):
     myteam = Team(player_list)
     myteam.make_teams()
     if len(myteam.TeamA) < len(myteam.TeamB):
-        myteam.TeamA.append(" ")
+        myteam.TeamA.append("ZZ Ghoast :)")
     elif len(myteam.TeamB) < len(myteam.TeamA):
-        myteam.TeamB.append(" ")
+        myteam.TeamB.append("ZZ Ghoast :)")
     cols = ["White-Jersey Team","Black-Jersey Team"]
     random.shuffle(cols)
+    myteam.TeamA.sort()
+    myteam.TeamB.sort()
     return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB})
 
 st.markdown(
