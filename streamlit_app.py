@@ -2,9 +2,15 @@ import streamlit as st
 import pandas as pd
 import copy
 import random
+import os
 
 df = pd.read_csv('Soccer Sunday.csv')
 players = list(df['Player'])
+
+def push_to_git():
+    os.system('git add .')
+    os.system('git commit -m "System push for player"')
+    os.system('git push -u origin master')
 
 class Team:
     def __init__(self, player_dict):
@@ -149,6 +155,8 @@ with player_tab:
 
             st.write('The player "{}"" is updated'.format(row.Player.item()))
 
+            push_to_git()
+
     st.write("-----")
 
     st.write("### Add New Player")
@@ -167,6 +175,9 @@ with player_tab:
             df = pd.concat([df,pd.DataFrame([new_player],columns=["Player","Defense","Middle","Forward","Goalie","Present"])])
             df.to_csv('Soccer Sunday.csv',index=False)
             st.write('The player "{}"" is Added'.format(new_name))
+
+            push_to_git()
+            print('Push to Git')
 
     
 
