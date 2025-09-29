@@ -10,7 +10,7 @@ players = list(df['Player'])
 def push_to_git():
     os.system('git add .')
     os.system('git commit -m "System push for player"')
-    os.system('git push -u origin master')
+    os.system('git push -u origin main')
 
 class Team:
     def __init__(self, player_dict):
