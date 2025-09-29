@@ -86,8 +86,8 @@ def select_teams(player_list):
         myteam.TeamB.append("ZZ Ghoast :)")
     cols = ["White-Jersey Team","Black-Jersey Team"]
     random.shuffle(cols)
-    myteam.TeamA.sort()
-    myteam.TeamB.sort()
+    #myteam.TeamA.sort()
+    #myteam.TeamB.sort()
     return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB})
 
 st.markdown(
