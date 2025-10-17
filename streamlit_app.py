@@ -154,7 +154,7 @@ with player_tab:
             df['Defense'].loc[ind] = df['Defense'].loc[ind]+back
             df['Middle'].loc[ind] = df['Middle'].loc[ind]+mid
             df['Forward'].loc[ind] = df['Forward'].loc[ind]+forw
-            df['Player'].iloc[ind] = playername
+            df['Player'].loc[ind] = playername
             df.to_csv('Soccer Sunday.csv',index=False)
 
             st.write('The player "{}"" is updated'.format(row.Player.item()))
