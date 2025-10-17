@@ -143,6 +143,7 @@ with player_tab:
     if selected_player:
         row = df[df['Player']==selected_player]
         ind = row.index
+        playername = st.text_input("NAME",value=selected_player)
         goal = st.radio("Goalie",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_g")
         back = st.radio("Defense",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_b")
         mid = st.radio("Middle",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_m")
@@ -153,6 +154,7 @@ with player_tab:
             df['Defense'].loc[ind] = df['Defense'].loc[ind]+back
             df['Middle'].loc[ind] = df['Middle'].loc[ind]+mid
             df['Forward'].loc[ind] = df['Forward'].loc[ind]+forw
+            df['Player'].iloc[ind] = playername
             df.to_csv('Soccer Sunday.csv',index=False)
 
             st.write('The player "{}"" is updated'.format(row.Player.item()))
