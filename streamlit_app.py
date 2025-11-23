@@ -118,7 +118,7 @@ with selection_tab:
             with col2:
                 if checked:
                     slider_key = f"slider_{player}"
-                    st.radio("Strength",[10,8,5],
+                    st.radio("Strength",[10,9,7],
                             horizontal=True,key=slider_key)
 
         #selected_options = st.multiselect(
@@ -136,6 +136,8 @@ with selection_tab:
         st.write("*{}*".format(caps))
         st.write("-----")
         st.table(teams)
+        st.write("Use This:")
+        st.table(teams.sample(frac=1))
 
 with player_tab:
     st.write("### Update Player")
