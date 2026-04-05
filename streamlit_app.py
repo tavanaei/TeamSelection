@@ -17,6 +17,7 @@ class Team:
         player_list = list(player_dict.keys())
         self.table = df
         self.table = self.table[self.table['Player'].isin(player_list)].reset_index(drop=True)
+
         #print(len(self.table))
         if len(self.table) < 14:
             dummy = [["Ghoast",4,4,4,2,1] for i in range(14-len(self.table))]
@@ -24,10 +25,13 @@ class Team:
         self.table = self.table.sample(frac=1).reset_index(drop=True)
         self.TeamA = []
         self.TeamB = []
+        for c in ["Goalie","Defense","Middle","Forward"]:
+            self.table[c]=self.table[c].astype(float)
+    
         for i in range(len(self.table)):
             name = self.table.iloc[i]["Player"]
             for c in ["Goalie","Defense","Middle","Forward"]:
-                self.table[c].iloc[i] = self.table[c].iloc[i]*player_dict[name]
+                self.table.loc[i,c] = self.table.loc[i,c]*player_dict[name]
     def select_goalie(self,A,B):
         self.table.sort_values(by=['Goalie'], inplace=True, ascending=False)
         A.append(self.table.iloc[0]['Player'])
@@ -152,11 +156,11 @@ with player_tab:
         forw = st.radio("Forward",[-2,-1,0,1,2],index=2,horizontal=True,key="rb_f")
         
         if st.button("Update"):
-            df['Goalie'].loc[ind] = df['Goalie'].loc[ind]+goal
-            df['Defense'].loc[ind] = df['Defense'].loc[ind]+back
-            df['Middle'].loc[ind] = df['Middle'].loc[ind]+mid
-            df['Forward'].loc[ind] = df['Forward'].loc[ind]+forw
-            df['Player'].loc[ind] = playername
+            df.loc[ind,'Goalie'] = df.loc[ind,'Goalie']+goal
+            df.loc[ind,'Defense'] = df.loc[ind,'Defense']+back
+            df.loc[ind,'Middle'] = df.loc[ind,'Middle']+mid
+            df.loc[ind,'Forward'] = df.loc[ind,'Forward']+forw
+            df.loc[ind,'Player'] = playername
             df.to_csv('Soccer Sunday.csv',index=False)
 
             st.write('The player "{}"" is updated'.format(row.Player.item()))
