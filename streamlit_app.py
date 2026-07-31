@@ -19,18 +19,19 @@ class Team:
         self.table = self.table[self.table['Player'].isin(player_list)].reset_index(drop=True)
 
         #print(len(self.table))
-        if len(self.table) < 14:
-            dummy = [["Ghoast",4,4,4,2,1] for i in range(14-len(self.table))]
+        if len(self.table) < 16:
+            player_dict['Ghoast'] = 1.0
+            dummy = [["Ghoast",1,1,1,1,1] for i in range(16-len(self.table))]
             self.table = pd.concat([self.table, pd.DataFrame(dummy, columns=self.table.columns)], ignore_index=True)
         self.table = self.table.sample(frac=1).reset_index(drop=True)
         self.TeamA = []
         self.TeamB = []
-        for c in ["Goalie","Defense","Middle","Forward"]:
+        for c in ["Goalie","Defense","Middle","Forward","Winger"]:
             self.table[c]=self.table[c].astype(float)
     
         for i in range(len(self.table)):
             name = self.table.iloc[i]["Player"]
-            for c in ["Goalie","Defense","Middle","Forward"]:
+            for c in ["Goalie","Defense","Middle","Forward","Winger"]:
                 self.table.loc[i,c] = self.table.loc[i,c]*player_dict[name]
     def select_goalie(self,A,B):
         self.table.sort_values(by=['Goalie'], inplace=True, ascending=False)
@@ -50,6 +51,12 @@ class Team:
         self.table.drop(self.table.index[0], inplace=True)
         B.append(self.table.iloc[0]['Player'])
         self.table.drop(self.table.index[0], inplace=True)
+    def select_winger(self,A,B):
+        self.table.sort_values(by=['Winger'], inplace=True, ascending=False)
+        A.append(self.table.iloc[0]['Player'])
+        self.table.drop(self.table.index[0], inplace=True)
+        B.append(self.table.iloc[0]['Player'])
+        self.table.drop(self.table.index[0], inplace=True)
     def select_forward(self,A,B):
         self.table.sort_values(by=['Forward'], inplace=True, ascending=False)
         A.append(self.table.iloc[0]['Player'])
@@ -60,7 +67,7 @@ class Team:
         self.table.drop(self.table.index[0], inplace=True)
         return v_a,v_b
     def select_rest(self,A,B):
-        self.table['overall'] = self.table[['Goalie','Defense','Middle','Forward']].mean(axis=1)
+        self.table['overall'] = self.table[['Goalie','Defense','Middle','Forward','Winger']].mean(axis=1)
         self.table.sort_values(by=['overall'], inplace=True, ascending=False)
         A.append(self.table.iloc[0]['Player'])
         self.table.drop(self.table.index[0], inplace=True)
@@ -71,10 +78,11 @@ class Team:
         self.select_goalie(self.TeamA,self.TeamB)
         f_b,f_a = self.select_forward(self.TeamB,self.TeamA)
         self.select_midfielder(self.TeamA,self.TeamB)
-        if f_b-f_a>1:
+        if f_b-f_a>2:
             self.select_defender(self.TeamA,self.TeamB)
         else:
             self.select_defender(self.TeamB,self.TeamA)
+        self.select_winger(self.TeamA,self.TeamB)
         x1,x2 = self.select_forward(self.TeamA,self.TeamB)
         self.select_midfielder(self.TeamB,self.TeamA)
         self.select_defender(self.TeamA,self.TeamB)
@@ -122,7 +130,7 @@ with selection_tab:
             with col2:
                 if checked:
                     slider_key = f"slider_{player}"
-                    st.radio("Strength",[10,9,7],
+                    st.radio("Strength",[10,8,6],
                             horizontal=True,key=slider_key)
 
         #selected_options = st.multiselect(
