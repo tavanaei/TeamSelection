@@ -86,6 +86,7 @@ class Team:
         x1,x2 = self.select_forward(self.TeamA,self.TeamB)
         self.select_midfielder(self.TeamB,self.TeamA)
         self.select_defender(self.TeamA,self.TeamB)
+        self.select_winger(self.TeamB,self.TeamA)
         while len(self.table)>0:
             self.select_rest(self.TeamB,self.TeamA)
 
