@@ -106,8 +106,8 @@ def select_teams(player_list):
     #myteam.TeamB.sort()
     teamA = copy.deepcopy(myteam.TeamA)
     teamB = copy.deepcopy(myteam.TeamB)
-    teamA.shuffle()
-    teamB.shuffle()
+    random.shuffle(teamA)
+    random.shuffle(teamB)
     return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB}),pd.DataFrame({cols[0]: teamA, cols[1]: teamB})
 
 st.markdown(
