@@ -104,7 +104,11 @@ def select_teams(player_list):
     random.shuffle(cols)
     #myteam.TeamA.sort()
     #myteam.TeamB.sort()
-    return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB})
+    teamA = copy.deepcopy(myteam.TeamA)
+    teamB = copy.deepcopy(myteam.TeamB)
+    teamA.shuffle()
+    teamB.shuffle()
+    return "Captains: "+myteam.TeamA[2]+ "  --  "+ myteam.TeamB[2],pd.DataFrame({cols[0]: myteam.TeamA, cols[1]: myteam.TeamB}),pd.DataFrame({cols[0]: teamA, cols[1]: teamB})
 
 st.markdown(
     """
@@ -145,7 +149,7 @@ with selection_tab:
             key.replace("slider_",""): float(value)/10.0 for key,value in st.session_state.items() if key.startswith("slider_")
         }
         if st.button("Run"):
-            caps,teams = select_teams(selected_options)
+            caps,teams,shuffledTeams = select_teams(selected_options)
 
     if teams is not None:
         st.write("### Players: {}".format(len(selected_options)))
@@ -153,7 +157,7 @@ with selection_tab:
         st.write("-----")
         st.table(teams)
         st.write("Use This:")
-        st.table(teams.sample(frac=1))
+        st.table(shuffledTeams)
 
 with player_tab:
     st.write("### Update Player")
